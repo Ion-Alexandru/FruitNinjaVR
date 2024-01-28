@@ -13,7 +13,7 @@ public class BulletScript : MonoBehaviour
 
     public Transform bulletStart;
     public Transform bulletEnd;
-    public GameObject yellowParticleEffect;
+    //public GameObject yellowParticleEffect;
 
     private void FixedUpdate()
     {
@@ -25,7 +25,9 @@ public class BulletScript : MonoBehaviour
 
             // Add combo score
             GameManager.instance.PlayerCutFruit(target.transform);
-            GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
+            //GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
+
+            target.GetComponent<FruitScript>().FruitSliced();
 
             // Slice the target
             Slice(target);

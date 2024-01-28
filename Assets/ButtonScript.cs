@@ -15,9 +15,8 @@ public class ButtonScript : MonoBehaviour
 
     private bool gameStarted = false;
 
-
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         GameObject newFruitButton =  Instantiate(buttonFruitPrefab, transform.position, Quaternion.identity);
         buttonFruit = newFruitButton;

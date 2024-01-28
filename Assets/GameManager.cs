@@ -8,12 +8,12 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     private float lastCutTime;
-    public float timerDuration = 3f;
+    public float timerDuration = 2f;
 
     public GameObject comboScreen;
     public TextMeshProUGUI comboText;
 
-    private int comboScore;
+    public int comboScore;
     public static GameManager instance;
 
     private Vector3 originalComboScreenScale;
@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
 
         originalComboScreenScale = comboScreen.transform.localScale;
 
-        comboScore = 0;
+        comboScore = 1;
 
         gameSelected = false;
     }
@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
                 comboScreen.transform.localScale = originalComboScreenScale;
                 comboScreen.SetActive(false);
             }
-            comboScore = 0;
+            comboScore = 1;
         }
 
         if (comboScore >= 2)

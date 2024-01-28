@@ -1,11 +1,12 @@
 using EzySlice;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 
 public class SwordScript : MonoBehaviour
 {
-    public GameObject yellowParticleEffect;
+    //public GameObject yellowParticleEffect;
 
     public Transform bladeStart;
     public Transform bladeEnd;
@@ -14,6 +15,20 @@ public class SwordScript : MonoBehaviour
 
     public Material crossSectionMaterial;
     public float cutforce = 2f;
+
+    // Sword sound logic
+    public float minSwingVelocity = 10f;
+    public AudioClip swingSound;
+    public AudioClip fruitSliceSound;
+    private bool isSwingSoundPlaying = false;
+    private AudioSource audioSource;
+    private UnityEngine.Vector3 previousSwingDirection;
+    private float swingDirectionChangeThreshold = 200f;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     private void FixedUpdate()
     {
@@ -25,17 +40,60 @@ public class SwordScript : MonoBehaviour
 
             // Add combo score
             GameManager.instance.PlayerCutFruit(target.transform);
-            GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
+            //GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
+
+            target.GetComponent<FruitScript>().FruitSliced();
+
+            if(!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(fruitSliceSound);
+            }
 
             // Slice the target
             Slice(target);
+        }
+
+        // Get the current swing direction
+        UnityEngine.Vector3 currentSwingDirection = velocityEstimator.GetVelocityEstimate().normalized;
+
+        // Check if the swing sound should be played
+        if (swingSound != null && ShouldPlaySwingSound(currentSwingDirection))
+        {
+            audioSource.PlayOneShot(swingSound);
+        }
+
+        // Update the previous swing direction
+        previousSwingDirection = currentSwingDirection;
+    }
+
+    // Function to determine if the swing sound should be played based on the change in swing direction
+    private bool ShouldPlaySwingSound(UnityEngine.Vector3 currentSwingDirection)
+    {
+        // Check if the swing sound is not already playing and the change in swing direction exceeds the threshold
+        if (!isSwingSoundPlaying && UnityEngine.Vector3.Angle(currentSwingDirection, previousSwingDirection) > swingDirectionChangeThreshold)
+        {
+            // Set the flag to indicate that the swing sound is now playing
+            isSwingSoundPlaying = true;
+            return true; // Return true to play the swing sound
+        }
+
+        // If the swing direction change is not significant or the swing sound is already playing, return false
+        return false;
+    }
+
+    // Reset the flag when the swing sound finishes playing
+    private void Update()
+    {
+        if (!audioSource.isPlaying && isSwingSoundPlaying)
+        {
+            isSwingSoundPlaying = false; // Reset the flag since the swing sound has finished playing
         }
     }
 
     public void Slice(GameObject target)
     {
-        Vector3 velocity = velocityEstimator.GetVelocityEstimate();
-        Vector3 planeNormal = Vector3.Cross(bladeEnd.position - bladeStart.position, velocity);
+        UnityEngine.Vector3 velocity = velocityEstimator.GetVelocityEstimate();
+        UnityEngine.Vector3 planeNormal = UnityEngine.Vector3.Cross(bladeEnd.position - bladeStart.position, velocity);
         planeNormal.Normalize();
 
         SlicedHull hull = target.Slice(bladeEnd.position, planeNormal);
