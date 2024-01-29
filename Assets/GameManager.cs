@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject[] gameModes;
     public GameObject[] buttons;
+    private ScoreScreenScript scoreScreenScript;
 
     void Awake()
     {
@@ -48,6 +49,9 @@ public class GameManager : MonoBehaviour
         comboScore = 1;
 
         gameSelected = false;
+
+        Time.timeScale = 1f;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
     }
 
     // Call this method when the player cuts a fruit
@@ -65,9 +69,12 @@ public class GameManager : MonoBehaviour
 
     public void AddFailures()
     {
-        ScoreScreenScript scoreScreenScript = FindAnyObjectByType<ScoreScreenScript>();
+        if(FindAnyObjectByType<ScoreScreenScript>() != null)
+        {
+            scoreScreenScript = FindAnyObjectByType<ScoreScreenScript>();
 
-        scoreScreenScript.takeHearts();
+            scoreScreenScript.takeHearts();
+        }
 
         fails += 1;
 

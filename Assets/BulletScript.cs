@@ -29,28 +29,76 @@ public class BulletScript : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
+    void Update()
+    {
+        // Define the plane for slicing (position and direction)
+        Vector3 planePosition = transform.position;
+        Vector3 planeDirection = velocityEstimator.GetVelocityEstimate().normalized; // use the sword's velocity
+
+        // Get all colliders in the scene
+        Collider[] allColliders = Physics.OverlapSphere(transform.position, 0.1f, sliceableLayer);
+
+        foreach (Collider collider in allColliders)
+        {
+            GameObject fruit = collider.gameObject;
+
+            // Perform the slicing
+            SlicedHull hull = fruit.Slice(planePosition, planeDirection);
+
+            if (hull != null)
+            {
+                // Add combo score
+                GameManager.instance.PlayerCutFruit(fruit.transform);
+                //GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
+
+                fruit.GetComponent<FruitScript>().FruitSliced();
+
+                if(!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(fruitSliceSound);
+                }
+
+                // Create upper and lower game objects
+                GameObject upperGameObject = hull.CreateUpperHull(fruit, fruit.GetComponent<MeshRenderer>().material);
+                GameObject lowerGameObject = hull.CreateLowerHull(fruit, fruit.GetComponent<MeshRenderer>().material);
+                
+                AddRigidbodyAndCollider(upperGameObject);
+                AddRigidbodyAndCollider(lowerGameObject);
+
+                // Add some force to the sliced parts for visual effect
+                upperGameObject.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * 5f, ForceMode.Impulse);
+                lowerGameObject.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * 5f, ForceMode.Impulse);
+
+                // Destroy the original fruit
+                Destroy(fruit);
+
+                StartCoroutine(DestroyHulls(lowerGameObject, upperGameObject));
+            }
+        }
+    }
+
     private void FixedUpdate()
     {
-        bool hasHit = Physics.Linecast(bulletStart.position, bulletEnd.position, out RaycastHit hit, sliceableLayer);
+        // bool hasHit = Physics.Linecast(bulletStart.position, bulletEnd.position, out RaycastHit hit, sliceableLayer);
 
-        if (hasHit)
-        {
-            GameObject target = hit.transform.gameObject;
+        // if (hasHit)
+        // {
+        //     GameObject target = hit.transform.gameObject;
 
-            // Add combo score
-            GameManager.instance.PlayerCutFruit(target.transform);
-            //GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
+        //     // Add combo score
+        //     GameManager.instance.PlayerCutFruit(target.transform);
+        //     //GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
 
-            target.GetComponent<FruitScript>().FruitSliced();
+        //     target.GetComponent<FruitScript>().FruitSliced();
 
-            if(!audioSource.isPlaying)
-            {
-                audioSource.PlayOneShot(fruitSliceSound);
-            }
+        //     if(!audioSource.isPlaying)
+        //     {
+        //         audioSource.PlayOneShot(fruitSliceSound);
+        //     }
 
-            // Slice the target
-            Slice(target);
-        }
+        //     // Slice the target
+        //     Slice(target);
+        // }
 
         // Bomb cut logic
         bool bombHit = Physics.Linecast(bulletStart.position, bulletEnd.position, out RaycastHit bombRay, bombLayer);

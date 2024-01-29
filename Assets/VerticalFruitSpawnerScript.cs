@@ -29,13 +29,18 @@ public class VerticalFruitSpawnerScript : MonoBehaviour
                 Vector3 forwardForce = -Vector3.forward * spawnForce;
 
                 // Apply the force continuously to the fruit
-                StartCoroutine(ApplyContinuousForce(fruitRb, forwardForce, newFruit));
+                ApplyContinuousForce(fruitRb, forwardForce, newFruit);
                 fruitRb.useGravity = false;
             }
         }
     }
 
-    IEnumerator ApplyContinuousForce(Rigidbody rb, Vector3 force, GameObject newFruit)
+    void ApplyContinuousForce(Rigidbody rb, Vector3 force, GameObject newFruit)
+    {
+        StartCoroutine(ContinuousForceCoroutine(rb, force, newFruit));
+    }
+
+    IEnumerator ContinuousForceCoroutine(Rigidbody rb, Vector3 force, GameObject newFruit)
     {
         while (rb != null)
         {

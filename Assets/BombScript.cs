@@ -50,7 +50,10 @@ public class BombScript : MonoBehaviour
         GameManager.instance.AddFailures();
         GameManager.instance.AddFailures();
 
-        scoreScreenScript.DestroyScoreScreen();
+        if(scoreScreenScript != null)
+        {
+            scoreScreenScript.DestroyScoreScreen();
+        }
 
         Destroy(gameObject);
     }

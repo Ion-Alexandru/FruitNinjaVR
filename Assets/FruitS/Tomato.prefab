@@ -13,9 +13,8 @@ GameObject:
   - component: {fileID: 8318145778773587272}
   - component: {fileID: 2102452214684774153}
   - component: {fileID: 7081082159096303870}
-  - component: {fileID: -1680400904687591905}
-  - component: {fileID: 2629340285700541329}
   - component: {fileID: 4638193670121761055}
+  - component: {fileID: -3462706633591214124}
   m_Layer: 3
   m_Name: Tomato
   m_TagString: Fruit
@@ -128,39 +127,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fruitSplashParticle: {fileID: 3787900454366268964, guid: 59fb9568243f51e4284af0942efdd3ca, type: 3}
---- !u!114 &-1680400904687591905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3573891649773794697}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab550948693868c44b293263c74acbe1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!65 &2629340285700541329
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3573891649773794697}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.088447876, y: 0.07756567, z: 0.09299936}
-  m_Center: {x: 0, y: -0.000000003725291, z: 0}
 --- !u!82 &4638193670121761055
 AudioSource:
   m_ObjectHideFlags: 0
@@ -257,3 +223,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!135 &-3462706633591214124
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3573891649773794697}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.09
+  m_Center: {x: 0, y: 0, z: 0}

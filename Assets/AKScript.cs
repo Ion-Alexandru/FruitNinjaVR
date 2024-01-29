@@ -16,6 +16,18 @@ public class AKScript : MonoBehaviour
     private bool isShooting = false;
     private bool isCoroutineRunning = false;
 
+    // Audio and visual logic
+    
+    public GameObject shotParticle;
+    public GameObject muzzleFlashPrefab;
+    public AudioClip shootSound;
+    private AudioSource audioSource;
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     public void StartShoot()
     {
         isShooting = true;
@@ -35,8 +47,13 @@ public class AKScript : MonoBehaviour
         isCoroutineRunning = true;
         while (isShooting)
         {
+            // Start particle system and let out AK sound
+            audioSource.PlayOneShot(shootSound);
+
+            MuzzleFlash();
+
             // Instantiate the bullet prefab at the shoot point position and rotation
-            GameObject bullet = Instantiate(bulletPrefab, shootPoint.position, shootPoint.rotation);
+            GameObject bullet = Instantiate(bulletPrefab, shootPoint.position, Quaternion.identity);
 
             // Access the Rigidbody component of the bullet
             Rigidbody bulletRb = bullet.GetComponent<Rigidbody>();
@@ -51,5 +68,15 @@ public class AKScript : MonoBehaviour
             yield return new WaitForSeconds(1f / fireRate);
         }
         isCoroutineRunning = false;
+    }
+
+    void MuzzleFlash()
+    {
+        // Instantiate the muzzle flash
+        GameObject muzzleFlash = Instantiate(muzzleFlashPrefab, shootPoint.position, Quaternion.identity);
+        muzzleFlash.transform.parent = shootPoint;
+
+        // Destroy the muzzle flash after a short delay
+        Destroy(muzzleFlash, 0.05f);
     }
 }

@@ -33,26 +33,79 @@ public class SwordScript : MonoBehaviour
 
     private void FixedUpdate()
     {
-        bool hasHit = Physics.Linecast(bladeStart.position, bladeEnd.position, out RaycastHit hit, sliceableLayer);
+        UnityEngine.Vector3 velocity = velocityEstimator.GetVelocityEstimate();
 
-        if (hasHit)
+        // Only perform slicing if the sword is moving fast enough
+        if (velocity.magnitude >= minSwingVelocity)
         {
-            GameObject target = hit.transform.gameObject;
+            // Define the plane for slicing (position and normal)
+            UnityEngine.Vector3 planePosition = bladeStart.position;
+            UnityEngine.Vector3 planeNormal = UnityEngine.Vector3.Cross(bladeEnd.position - bladeStart.position, velocity).normalized;
 
-            // Add combo score
-            GameManager.instance.PlayerCutFruit(target.transform);
-            //GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
+            // Get all colliders in the scene
+            Collider[] allColliders = Physics.OverlapSphere(transform.position, 0.9f, sliceableLayer);
 
-            target.GetComponent<FruitScript>().FruitSliced();
-
-            if(!audioSource.isPlaying)
+            foreach (Collider collider in allColliders)
             {
-                audioSource.PlayOneShot(fruitSliceSound);
-            }
+                GameObject fruit = collider.gameObject;
 
-            // Slice the target
-            Slice(target);
+                // Perform the slicing
+                SlicedHull hull = fruit.Slice(planePosition, planeNormal);
+
+                if (hull != null)
+                {
+                    // Add combo score
+                    GameManager.instance.PlayerCutFruit(fruit.transform);
+                    //GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
+
+                    fruit.GetComponent<FruitScript>().FruitSliced();
+
+                    if(!audioSource.isPlaying)
+                    {
+                        audioSource.PlayOneShot(fruitSliceSound);
+                    }
+
+                    // Create upper and lower game objects from the sliced hull
+                    GameObject upperHull = hull.CreateUpperHull(fruit, fruit.GetComponent<MeshRenderer>().material);
+                    GameObject lowerHull = hull.CreateLowerHull(fruit, fruit.GetComponent<MeshRenderer>().material);
+
+                    // Add Rigidbody and Collider to the sliced parts
+                    AddRigidbodyAndCollider(upperHull);
+                    AddRigidbodyAndCollider(lowerHull);
+
+                    // Add some force to the sliced parts for visual effect
+                    UnityEngine.Vector3 forceDirection = velocity.normalized;
+                    upperHull.GetComponent<Rigidbody>().AddForce(forceDirection * cutforce, ForceMode.Impulse);
+                    lowerHull.GetComponent<Rigidbody>().AddForce(-forceDirection * cutforce, ForceMode.Impulse);
+
+                    // Destroy the original object
+                    Destroy(fruit);
+
+                    StartCoroutine(DestroyHulls(lowerHull, upperHull));
+                }
+            }
         }
+
+        // bool hasHit = Physics.Linecast(bladeStart.position, bladeEnd.position, out RaycastHit hit, sliceableLayer);
+
+        // if (hasHit)
+        // {
+        //     GameObject target = hit.transform.gameObject;
+
+        //     // Add combo score
+        //     GameManager.instance.PlayerCutFruit(target.transform);
+        //     //GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
+
+        //     target.GetComponent<FruitScript>().FruitSliced();
+
+        //     if(!audioSource.isPlaying)
+        //     {
+        //         audioSource.PlayOneShot(fruitSliceSound);
+        //     }
+
+        //     // Slice the target
+        //     Slice(target);
+        // }
 
         // Bomb cut logic
         bool bombHit = Physics.Linecast(bladeStart.position, bladeEnd.position, out RaycastHit bombRay, bombLayer);
@@ -113,13 +166,13 @@ public class SwordScript : MonoBehaviour
     }
 
     // Reset the flag when the swing sound finishes playing
-    private void Update()
-    {
-        if (!audioSource.isPlaying && isSwingSoundPlaying)
-        {
-            isSwingSoundPlaying = false; // Reset the flag since the swing sound has finished playing
-        }
-    }
+    // private void Update()
+    // {
+    //     if (!audioSource.isPlaying && isSwingSoundPlaying)
+    //     {
+    //         isSwingSoundPlaying = false; // Reset the flag since the swing sound has finished playing
+    //     }
+    // }
 
     public void Slice(GameObject target)
     {
