@@ -8,9 +8,30 @@ public class VerticalGamemodeScript : MonoBehaviour
     public float initialSpawnInterval = 4f;
     public float minSpawnInterval = 1.5f;
 
-    public void Awake()
+    private Coroutine spawnerCoroutine;
+
+    private void OnEnable()
     {
-        StartCoroutine(VerticalFruitSpawner());
+        StartSpawner();
+    }
+
+    private void OnDisable()
+    {
+        StopSpawner();
+    }
+
+    private void StartSpawner()
+    {
+        spawnerCoroutine = StartCoroutine(VerticalFruitSpawner());
+    }
+
+    private void StopSpawner()
+    {
+        if (spawnerCoroutine != null)
+        {
+            StopCoroutine(spawnerCoroutine);
+            spawnerCoroutine = null;
+        }
     }
 
     IEnumerator VerticalFruitSpawner()
@@ -22,7 +43,7 @@ public class VerticalGamemodeScript : MonoBehaviour
             yield return wait;
 
             // Randomly choose the number of fruits to spawn
-            int numSpawners = Random.Range(1, verticalSpawners.Length); // this can be changed
+            int numSpawners = Random.Range(0, verticalSpawners.Length); // this can be changed
 
             // get the VerticalFruitSpawnerScript of verticalSpawners[numSpawners]
             verticalSpawners[numSpawners].GetComponent<VerticalFruitSpawnerScript>().SpawnFruit();

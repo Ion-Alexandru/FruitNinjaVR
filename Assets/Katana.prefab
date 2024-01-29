@@ -238,6 +238,12 @@ MonoBehaviour:
   sliceableLayer:
     serializedVersion: 2
     m_Bits: 8
+  bombLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  fruitButtonLayer:
+    serializedVersion: 2
+    m_Bits: 256
   crossSectionMaterial: {fileID: 2100000, guid: dae27729a6a61a74088753e51f838bb2, type: 2}
   cutforce: 20
   minSwingVelocity: 5
@@ -300,7 +306,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 004d0ecc49d32c74bb71b227a35e69f4, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

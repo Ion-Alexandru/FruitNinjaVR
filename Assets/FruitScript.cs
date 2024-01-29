@@ -15,20 +15,20 @@ public class FruitScript : MonoBehaviour
         scoreScreenScript = FindObjectOfType<ScoreScreenScript>();
     }
 
-    // void Update()
-    // {
-    //     Camera camera = Camera.main;
+    void Update()
+    {
+        Camera camera = Camera.main;
 
-    //     if (gameObject.transform.position.y <= -1)
-    //     {
-    //         gameManager.AddFailures();
-    //         Destroy(gameObject);
-    //     } else if(gameObject.transform.position.z < camera.transform.position.z - 1)
-    //     {
-    //         gameManager.AddFailures();
-    //         Destroy(gameObject);
-    //     }
-    // }
+        if (gameObject.transform.position.y <= -1)
+        {
+            gameManager.AddFailures();
+            Destroy(gameObject);
+        } else if(gameObject.transform.position.z < camera.transform.position.z - 1)
+        {
+            gameManager.AddFailures();
+            Destroy(gameObject);
+        }
+    }
 
     public void FruitSliced()
     {

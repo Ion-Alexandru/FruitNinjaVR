@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -8347193859284879025}
   m_Layer: 3
   m_Name: Avocado
-  m_TagString: Untagged
+  m_TagString: Fruit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96,8 +96,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7936997906529912718}
   serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 3
+  m_Mass: 0.7
+  m_Drag: 5
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -128,7 +128,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fruitSplashParticle: {fileID: 6155580630002159352, guid: 82e9258b4e8bca94296f1a526e6228b8, type: 3}
-  sliceSound: {fileID: -8347193859284879025}
 --- !u!114 &-7521103317945746977
 MonoBehaviour:
   m_ObjectHideFlags: 0

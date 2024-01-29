@@ -6,14 +6,28 @@ using EzySlice;
 public class BulletScript : MonoBehaviour
 {
     public Material crossSectionMaterial;
-    public int sliceDistance = 10;
     public VelocityEstimator velocityEstimator;
+
     public LayerMask sliceableLayer;
+    public LayerMask bombLayer;
+    public LayerMask fruitButtonLayer;
+
     public float cutforce = 20f;
+    public int sliceDistance = 10;
 
     public Transform bulletStart;
     public Transform bulletEnd;
+
     //public GameObject yellowParticleEffect;
+
+    // Bullet Fruit Slice Sound logic
+    private AudioSource audioSource;
+    public AudioClip fruitSliceSound;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     private void FixedUpdate()
     {
@@ -28,6 +42,41 @@ public class BulletScript : MonoBehaviour
             //GameObject splashYellow = Instantiate(yellowParticleEffect, target.transform.position, Quaternion.identity);
 
             target.GetComponent<FruitScript>().FruitSliced();
+
+            if(!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(fruitSliceSound);
+            }
+
+            // Slice the target
+            Slice(target);
+        }
+
+        // Bomb cut logic
+        bool bombHit = Physics.Linecast(bulletStart.position, bulletEnd.position, out RaycastHit bombRay, bombLayer);
+
+        if(bombHit)
+        {
+            GameObject target = bombRay.transform.gameObject;
+
+            target.GetComponent<BombScript>().BombHit();
+        }
+
+        // Fruit Button logic
+        bool fruitButtonHit = Physics.Linecast(bulletStart.position, bulletEnd.position, out RaycastHit fruitButtonRay, fruitButtonLayer);
+
+        if(fruitButtonHit)
+        {
+            GameObject target = fruitButtonRay.transform.gameObject;
+
+            target.GetComponent<FruitScript>().FruitSliced();
+
+            if(!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(fruitSliceSound);
+            }
+
+            target.GetComponent<FruitButtonScript>().StartGame();
 
             // Slice the target
             Slice(target);

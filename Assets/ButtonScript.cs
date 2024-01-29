@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class ButtonScript : MonoBehaviour
@@ -13,13 +14,16 @@ public class ButtonScript : MonoBehaviour
     public GameObject fruitSpawner;
     public GameObject verticalFruitSpawner;
 
-    private bool gameStarted = false;
+    public bool gameStarted = false;
+
+    // Score Screen logic
+    public Transform scoreScreenPosition;
+    public GameObject scoreScreen;
 
     // Start is called before the first frame update
     void Start()
     {
-        GameObject newFruitButton =  Instantiate(buttonFruitPrefab, transform.position, Quaternion.identity);
-        buttonFruit = newFruitButton;
+        ReplaceFruitButtons();
     }
 
     // Update is called once per frame
@@ -27,19 +31,12 @@ public class ButtonScript : MonoBehaviour
     {
         Camera camera = Camera.main;
         transform.LookAt(transform.position + camera.transform.rotation * Vector3.forward, camera.transform.rotation * Vector3.up);
+    }
 
-        if(buttonFruit == null && !gameStarted)
-        {
-            if(gameMode.Contains("Classic GameMode"))
-            {
-                fruitSpawner.gameObject.SetActive(true);
-            } else if (gameMode.Contains("Vertical GameMode"))
-            {
-                verticalFruitSpawner.gameObject.SetActive(true);
-            }
-
-            gameStarted = true;
-            GameManager.instance.gameSelected = gameStarted;
-        }
+    public void ReplaceFruitButtons()
+    {
+        GameObject newFruitButton =  Instantiate(buttonFruitPrefab, transform.position, Quaternion.identity);
+        buttonFruit = newFruitButton;
+        buttonFruit.transform.SetParent(transform);
     }
 }

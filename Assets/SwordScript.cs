@@ -7,17 +7,18 @@ using UnityEngine;
 public class SwordScript : MonoBehaviour
 {
     //public GameObject yellowParticleEffect;
-
     public Transform bladeStart;
     public Transform bladeEnd;
     public VelocityEstimator velocityEstimator;
     public LayerMask sliceableLayer;
+    public LayerMask bombLayer;
+    public LayerMask fruitButtonLayer;
 
     public Material crossSectionMaterial;
     public float cutforce = 2f;
 
     // Sword sound logic
-    public float minSwingVelocity = 10f;
+    public float minSwingVelocity = 7f;
     public AudioClip swingSound;
     public AudioClip fruitSliceSound;
     private bool isSwingSoundPlaying = false;
@@ -48,6 +49,36 @@ public class SwordScript : MonoBehaviour
             {
                 audioSource.PlayOneShot(fruitSliceSound);
             }
+
+            // Slice the target
+            Slice(target);
+        }
+
+        // Bomb cut logic
+        bool bombHit = Physics.Linecast(bladeStart.position, bladeEnd.position, out RaycastHit bombRay, bombLayer);
+
+        if(bombHit)
+        {
+            GameObject target = bombRay.transform.gameObject;
+
+            target.GetComponent<BombScript>().BombHit();
+        }
+
+        // Fruit Button logic
+        bool fruitButtonHit = Physics.Linecast(bladeStart.position, bladeEnd.position, out RaycastHit fruitButtonRay, fruitButtonLayer);
+
+        if(fruitButtonHit)
+        {
+            GameObject target = fruitButtonRay.transform.gameObject;
+
+            target.GetComponent<FruitScript>().FruitSliced();
+
+            if(!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(fruitSliceSound);
+            }
+            
+            target.GetComponent<FruitButtonScript>().StartGame();
 
             // Slice the target
             Slice(target);

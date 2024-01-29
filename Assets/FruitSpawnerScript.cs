@@ -14,30 +14,51 @@ public class FruitSpawnerScript : MonoBehaviour
     public Transform player;
     public float constrainedYValue;
 
-    private void Awake()
+    private Coroutine spawnerCoroutine;
+
+    private void OnEnable()
     {
-        StartCoroutine(SpawnFruits());
+        StartSpawner();
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        //if (player != null)
-        //{
-        //    // Follow the parent's position
-        //    Vector3 newPosition = player.position;
-
-        //    // Constrain the y-value
-        //    newPosition.y = constrainedYValue;
-        //    newPosition.z = newPosition.z + 1;
-
-        //    // Apply the new position to the child object
-        //    transform.position = newPosition;
-
-        //    // Ensure no rotation on the x-axis
-        //    //transform.rotation = Quaternion.Euler(0f, player.rotation.eulerAngles.y, player.rotation.eulerAngles.z);
-        //    transform.LookAt(transform.position + player.transform.rotation * Vector3.forward, player.transform.rotation * Vector3.up);
-        //}
+        StopSpawner();
     }
+
+    private void StartSpawner()
+    {
+        spawnerCoroutine = StartCoroutine(SpawnFruits());
+    }
+
+    private void StopSpawner()
+    {
+        if (spawnerCoroutine != null)
+        {
+            StopCoroutine(spawnerCoroutine);
+            spawnerCoroutine = null;
+        }
+    }
+
+    // private void Update()
+    // {
+    //     if (player != null)
+    //     {
+    //        // Follow the parent's position
+    //        Vector3 newPosition = player.position;
+
+    //        // Constrain the y-value
+    //        newPosition.y = constrainedYValue;
+    //        newPosition.z = newPosition.z + 1;
+
+    //        // Apply the new position to the child object
+    //        transform.position = newPosition;
+
+    //        // Ensure no rotation on the x-axis
+    //        //transform.rotation = Quaternion.Euler(0f, player.rotation.eulerAngles.y, player.rotation.eulerAngles.z);
+    //        transform.LookAt(transform.position + player.transform.rotation * Vector3.forward, player.transform.rotation * Vector3.up);
+    //     }
+    // }
 
     IEnumerator SpawnFruits()
     {

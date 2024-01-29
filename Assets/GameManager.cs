@@ -8,8 +8,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     private float lastCutTime;
-    public float timerDuration = 2f;
-
+    public float timerDuration = 0.5f;
     public GameObject comboScreen;
     public TextMeshProUGUI comboText;
 
@@ -24,6 +23,7 @@ public class GameManager : MonoBehaviour
     private int fails = 0;
 
     public GameObject[] gameModes;
+    public GameObject[] buttons;
 
     void Awake()
     {
@@ -65,17 +65,34 @@ public class GameManager : MonoBehaviour
 
     public void AddFailures()
     {
-        //fails += 1;
+        ScoreScreenScript scoreScreenScript = FindAnyObjectByType<ScoreScreenScript>();
 
-        //if(fails >= 5 )
-        //{
-        //    gameSelected = false;
+        scoreScreenScript.takeHearts();
 
-        //    for(int i = 0; i < gameModes.Length; i++) 
-        //    {
-        //        gameModes[i].gameObject.SetActive(false);
-        //    }
-        //}
+        fails += 1;
+
+        comboScore = 1;
+
+        if(fails >= 3 )
+        {
+           gameSelected = false;
+
+           for(int i = 0; i < gameModes.Length; i++) 
+           {
+               gameModes[i].gameObject.SetActive(false);
+           }
+
+           foreach (GameObject button in buttons)
+           {
+               // Do something with each buttonScript
+               button.GetComponent<ButtonScript>().ReplaceFruitButtons();
+           }
+           
+           scoreScreenScript.DestroyScoreScreen();
+           DestroyAllFruits();
+
+           fails = 0;
+        }
     }
 
     private void Update()
@@ -92,20 +109,25 @@ public class GameManager : MonoBehaviour
             comboScore = 1;
         }
 
-        if (comboScore >= 2)
+        if (comboScore > 2)
         {
             comboScreen.SetActive(true);
 
             comboText.text = "Combo " + comboScore.ToString() + "x";
         }
 
-        if (!gameSelected)
+        gameSelectionScreen.gameObject.SetActive(!gameSelected);
+    }
+
+    void DestroyAllFruits()
+    {
+        // Find all GameObjects with the "fruit" layer
+        GameObject[] fruits = GameObject.FindGameObjectsWithTag("Fruit");
+
+        // Destroy each fruit found
+        foreach (GameObject fruit in fruits)
         {
-            gameSelectionScreen.gameObject.SetActive(true);
-        }
-        else
-        {
-            gameSelectionScreen.gameObject.SetActive(false);
+            Destroy(fruit);
         }
     }
 }
